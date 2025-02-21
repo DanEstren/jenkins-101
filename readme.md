@@ -1,26 +1,39 @@
+# 🚀 **Instalação do Jenkins BlueOcean com Docker**
 
-## YouTube Link
-For the full 1 hour course watch on youtube:
-https://www.youtube.com/watch?v=6YZvp2GwT0A
+---
 
-# Installation
-## Build the Jenkins BlueOcean Docker Image (or pull and use the one I built)
-```
+## 📺 **Vídeo do Curso Completo**
+Assista o curso completo de 1 hora no YouTube:  
+[https://www.youtube.com/watch?v=6YZvp2GwT0A](https://www.youtube.com/watch?v=6YZvp2GwT0A)
+
+---
+
+## 🐳 **Construa a Imagem Docker do Jenkins BlueOcean**
+
+### Opção 1: Construir a imagem localmente
+```bash
 docker build -t myjenkins-blueocean:2.414.2 .
-
-#IF you are having problems building the image yourself, you can pull from my registry (It is version 2.332.3-1 though, the original from the video)
-
-docker pull devopsjourney1/jenkins-blueocean:2.332.3-1 && docker tag devopsjourney1/jenkins-blueocean:2.332.3-1 myjenkins-blueocean:2.332.3-1
 ```
 
-## Create the network 'jenkins'
+### Opção 2: Usar a imagem pré-construída (versão 2.332.3-1)
+```bash
+docker pull devopsjourney1/jenkins-blueocean:2.332.3-1
+docker tag devopsjourney1/jenkins-blueocean:2.332.3-1 myjenkins-blueocean:2.332.3-1
 ```
+
+---
+
+## 🌐 **Criar a Rede 'jenkins'**
+```bash
 docker network create jenkins
 ```
 
-## Run the Container
-### MacOS / Linux
-```
+---
+
+## 🖥️ **Executar o Contêiner Jenkins**
+
+### Para **MacOS/Linux**:
+```bash
 docker run --name jenkins-blueocean --restart=on-failure --detach \
   --network jenkins --env DOCKER_HOST=tcp://docker:2376 \
   --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 \
@@ -30,8 +43,8 @@ docker run --name jenkins-blueocean --restart=on-failure --detach \
   myjenkins-blueocean:2.414.2
 ```
 
-### Windows
-```
+### Para **Windows** (PowerShell):
+```powershell
 docker run --name jenkins-blueocean --restart=on-failure --detach `
   --network jenkins --env DOCKER_HOST=tcp://docker:2376 `
   --env DOCKER_CERT_PATH=/certs/client --env DOCKER_TLS_VERIFY=1 `
@@ -40,30 +53,49 @@ docker run --name jenkins-blueocean --restart=on-failure --detach `
   --publish 8080:8080 --publish 50000:50000 myjenkins-blueocean:2.414.2
 ```
 
+---
 
-## Get the Password
-```
+## 🔑 **Obter a Senha Inicial**
+```bash
 docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword
 ```
 
-## Connect to the Jenkins
+---
+
+## 🌍 **Acessar o Jenkins**
+Abra no navegador:  
+🔗 [http://localhost:8080](http://localhost:8080)
+
+---
+
+## 📚 **Referência de Instalação**
+Documentação Oficial:  
+[https://www.jenkins.io/doc/book/installing/docker/](https://www.jenkins.io/doc/book/installing/docker/)
+
+---
+
+## 🔄 **Configurar Comunicação com Docker Host**
+
+### **alpine/socat** (para conectar Jenkins ao Docker Desktop)
+```bash
+docker run -d --restart=always -p 127.0.0.1:2376:2375 \
+  --network jenkins -v /var/run/docker.sock:/var/run/docker.sock \
+  alpine/socat tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
 ```
-https://localhost:8080/
-```
 
-## Installation Reference:
-https://www.jenkins.io/doc/book/installing/docker/
-
-
-## alpine/socat container to forward traffic from Jenkins to Docker Desktop on Host Machine
-
-https://stackoverflow.com/questions/47709208/how-to-find-docker-host-uri-to-be-used-in-jenkins-docker-plugin
-```
-docker run -d --restart=always -p 127.0.0.1:2376:2375 --network jenkins -v /var/run/docker.sock:/var/run/docker.sock alpine/socat tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
+### Obter IP do Contêiner
+```bash
 docker inspect <container_id> | grep IPAddress
 ```
 
-## Using my Jenkins Python Agent
-```
+---
+
+## 🐍 **Usar Agente Python Personalizado**
+```bash
 docker pull devopsjourney1/myjenkinsagents:python
 ```
+**Dica:** Use este agente em seus *Pipelines* para execução de scripts Python! 🐍
+
+---
+
+✨ **Pronto! Seu ambiente Jenkins está configurado e pronto para automatizar!** ✨
